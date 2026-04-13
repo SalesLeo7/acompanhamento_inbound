@@ -1,5 +1,3 @@
-## importando as bases
-
 import streamlit as st
 import pandas as pd
 
@@ -10,11 +8,10 @@ st.title("Acomapanhamento de Inbound (RECDOK)")
 
 ## Carregando os dados
 @st.cache_data
-
 def carregar_dados():
     inbound = pd.read_csv(r'base_inventory/inventory.csv', index_col=0, header=1)
     inbound = inbound.iloc[:, [0,2,3,4,5,18,29,30,31]]
-    inbound['receipt_dstamp'] = pd.to_datetime(inbound['receipt_dstamp'], dayfirst=True)
+    inbound['receipt_dstamp'] = pd.to_datetime(inbound['receipt_dstamp'], dayfirst=True, errors='coerce')
     inbound['lead_time_dias'] = (pd.Timestamp.today() - inbound['receipt_dstamp']).dt.days
     return inbound
 
@@ -36,7 +33,22 @@ site = st.sidebar.multiselect(
     default=inbound['site_id'].unique()
 )
 
-inbound_filtrado = inbound[inbound['owner_id'].isin(owner) & inbound['site_id'].isin(site)]
+# filtro de data
+data_inicio, data_fim = st.sidebar.date_input(
+    "Período (Receipt Date)",
+    value=(
+        inbound['receipt_dstamp'].min(),
+        inbound['receipt_dstamp'].max()
+    )
+)
+
+# 🔥 filtro completo com data
+inbound_filtrado = inbound[
+    (inbound['owner_id'].isin(owner)) &
+    (inbound['site_id'].isin(site)) &
+    (inbound['receipt_dstamp'] >= pd.to_datetime(data_inicio)) &
+    (inbound['receipt_dstamp'] <= pd.to_datetime(data_fim))
+]
 
 ## cards de metricas
 
