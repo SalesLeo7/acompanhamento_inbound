@@ -9,7 +9,7 @@ st.title("Acomapanhamento de Inbound (RECDOK)")
 ## Carregando os dados
 @st.cache_data
 def carregar_dados():
-    inbound = pd.read_csv(r'C:\Acompanhamento_inbound\base_inventory\inventory.csv', index_col=0, header=1)
+    inbound = pd.read_csv(r'base_inventory/inventory.csv', index_col=0, header=1)
     inbound = inbound.iloc[:, [0,2,3,4,5,18,29,30,31]]
     inbound['receipt_dstamp'] = pd.to_datetime(inbound['receipt_dstamp'], dayfirst=True, errors='coerce')
     inbound['lead_time_dias'] = (pd.Timestamp.today() - inbound['receipt_dstamp']).dt.days
