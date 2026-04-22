@@ -12,7 +12,7 @@ import os
 @st.cache_data
 def carregar_dados():
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    file_path = os.path.join(BASE_DIR, 'base_inventory', 'inventory3_corrigido.csv')
+    file_path = os.path.join(BASE_DIR, 'base_inventory', 'inventory_corrigido.csv')
 
     inbound = pd.read_csv(file_path, index_col=0, header=1)
     inbound = inbound.iloc[:, [0,1,2,3,4,5,18,29,30,31]]
